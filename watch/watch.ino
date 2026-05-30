@@ -6,39 +6,42 @@
 
 RTC_DS3231 rtc;
 
-// TM1637: CLK, DIO
 #define CLK 18
 #define DIO 19
 #define ALERT 2
-#define DB_PIN 4
+#define DB_PIN 4 
 TM1637Display display(CLK, DIO);
 
 
 int check_button_state(int button_pin, int flag)
 {
-    if (button_pin == 0 && flag == 0) // when button is pressed
+    if (button_pin == 0 && flag == 1) 
       {
-          display.setBrightness(0,false); // 0〜7
-          flag = 1;
+          display.setBrightness(0,false); 
+          flag= 0;
+          printf("the display  is now off  %d\n",flag);
           delay(500);
       }
-      else if (button_pin == 0 && flag == 1)
+      else if (button_pin == 0 && flag == 0)
       {
           display.setBrightness(7,true);
-          flag = 0;
+          flag = 1;
+          printf("the display is now on %d\n", flag);
           delay(500);
       }
+      else if (button_pin == 1 && flag == 1)
+          display.setBrightness(7,true);
       return (flag);
 }
 
 int check_alert(int h, int m)
 {
-    if (h == 15 && (32 <= m && m < 33))
-        return (1);
+    if (h == 18 && (14 <= m && m < 15))
+            return (1);
     return (0);
 }
 
-void alert_sound(int pin)
+int alert_sound(int pin)
 {
     int count = 0;
     while (count <= 3)
@@ -49,10 +52,11 @@ void alert_sound(int pin)
         delay(100);
         count++;
     }
+    return (0); // turn on the display
 }    
 
 int db_state;
-int laststate = 0;
+int laststate = 1;
 void setup() {
   Wire.begin(21, 22);
   rtc.begin();
@@ -74,12 +78,15 @@ void loop() {
 
   laststate = check_button_state(db_state,laststate);
   if (check_alert(h,m))
-      alert_sound(ALERT);
+      {
+          laststate = check_button_state(0,0);
+          alert_sound(ALERT);
+      }
 
       // i want to 
 //  display.showNumberDecEx(temp, 0b01000000, true);
 //  printf("the current time is :%d\n",value);
-    printf("the db_state and laststate is  %d : %d\n",db_state, laststate);
+//    printf("the db_state and laststate is  %d : %d\n",db_state, laststate);
   delay(10);
 }
 
