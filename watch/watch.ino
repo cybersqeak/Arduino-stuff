@@ -3,16 +3,52 @@
 #include "RTClib.h"
 #include <TM1637Display.h>
 #include <stdio.h>
-
+#include <DHT11.h>
 RTC_DS3231 rtc;
 
 #define CLK 18
 #define DIO 19
 #define ALERT 2
 #define DB_PIN 4 
+#define DHT11PIN 5
+
 TM1637Display display(CLK, DIO);
+DHT11 dht11(DHT11PIN);  
 
+void checkdht(int humidity, int temperature)
+{
+    if (humidity == DHT11::ERROR_CHECKSUM ||
+        humidity == DHT11::ERROR_TIMEOUT ||
+        temperature == DHT11::ERROR_CHECKSUM ||
+        temperature == DHT11::ERROR_TIMEOUT)
+    {
+        Serial.println("DHT read failed");
+        return;
+    }
 
+    Serial.print("humidity: ");
+    Serial.println(humidity);
+
+    Serial.print("temperature: ");
+    Serial.println(temperature);
+}
+/*
+void    checkdht(int humidity, int temperature)
+{
+    if (isnan(humidity) || isnan(temperature))
+  {
+      Serial.println("Failed to read from  dht sensor");
+      return ;
+  }
+  Serial.println("humidity: ");
+  Serial.println(humidity);
+  Serial.println(" %");
+  Serial.println("temperature: ");
+  Serial.println(temperature);
+  Serial.println(" *C");
+}
+  
+*/
 int check_button_state(int button_pin, int flag)
 {
     if (button_pin == 0 && flag == 1) 
@@ -36,7 +72,7 @@ int check_button_state(int button_pin, int flag)
 
 int check_alert(int h, int m)
 {
-    if (h == 18 && (14 <= m && m < 15))
+    if (h == 6 && (0 <= m && m < 1))
             return (1);
     return (0);
 }
@@ -60,17 +96,21 @@ int laststate = 1;
 void setup() {
   Wire.begin(21, 22);
   rtc.begin();
+//  dht.begin();
   Serial.begin(115200);
   pinMode(ALERT,OUTPUT);
   pinMode(DB_PIN,INPUT_PULLUP);
   analogWrite(ALERT,0);
+  delay(2000);
 }
 void loop() {
   DateTime now = rtc.now();
   int h = now.hour();
   int m = now.minute();
+ int hum = dht11.readHumidity();
+  int  temp = dht11.readTemperature();
+  checkdht(hum,temp);
   db_state = digitalRead(DB_PIN);
-
 
   // HHMM dis // 
   int value = h * 100 + m;
@@ -87,7 +127,7 @@ void loop() {
 //  display.showNumberDecEx(temp, 0b01000000, true);
 //  printf("the current time is :%d\n",value);
 //    printf("the db_state and laststate is  %d : %d\n",db_state, laststate);
-  delay(10);
+  delay(1000);
 }
 
 
