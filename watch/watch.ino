@@ -74,7 +74,7 @@ void setup() {
   pinMode(DB_PIN,INPUT_PULLUP);
   pinMode(DHTB_PIN,INPUT_PULLUP);
   analogWrite(ALERT,0);
-
+  //rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
   delay(2000);
 }
 
@@ -106,7 +106,7 @@ void loop() {
   display.showNumberDecEx(value, 0b01000000, true);
 
   laststate = check_button_state(db_state,laststate);
-  dht_button_laststate = check_button_state(dht_button_state,dht_button_laststate);
+  //dht_button_laststate = check_button_state(dht_button_state,dht_button_laststate);
 
 
   if (check_alert(h,m))
