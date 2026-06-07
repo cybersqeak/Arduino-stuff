@@ -8,16 +8,20 @@ RTC_DS3231 rtc;
 
 #define CLK 18
 #define DIO 19
+
 #define ALERT 2
-#define DB_PIN 4 
-#define DHTB_PIN 13
 #define DHTPIN 5
+
+#define DB_PIN 4  // the button to select display state ON or OFF
+#define MODE_PIN 13 // the button to select mode
+
 #define DHTTYPE DHT11
 
 TM1637Display display(CLK, DIO);
 
 DHT dht(DHTPIN, DHTTYPE);  
 
+/*
 int check_button_state(int button_pin, int flag)
 {
     if (button_pin == 0 && flag == 1) 
@@ -38,7 +42,7 @@ int check_button_state(int button_pin, int flag)
           display.setBrightness(7,true);
       return (flag);
 }
-
+*/
 int check_alert(int h, int m)
 {
     if (h == 6 && (0 <= m && m < 1))
@@ -60,10 +64,13 @@ int alert_sound(int pin)
     return (0); // turn on the display
 }    
 
-int db_state;
-int dht_button_state;
-int laststate = 1;
-int dht_button_laststate = 1;
+int display_button; // display button state  
+int mode_button; // mode setting button every time i press button it changes the current mode 
+
+int display_state = 1; // the display is on by default. 
+int mode_state = 1; // the mode is TIME mode by default.
+
+
 void setup() {
   Serial.begin(115200);
   Wire.begin(21, 22);
@@ -72,8 +79,9 @@ void setup() {
 
   pinMode(ALERT,OUTPUT);
   pinMode(DB_PIN,INPUT_PULLUP);
-  pinMode(DHTB_PIN,INPUT_PULLUP);
+  pinMode(MODE_PIN,INPUT_PULLUP);
   analogWrite(ALERT,0);
+
   //rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
   delay(2000);
 }
@@ -93,19 +101,19 @@ void loop() {
 
   int h = now.hour();
   int m = now.minute();
+  // HHMM display // 
+  int Time_value = h * 100 + m;
+  display.showNumberDecEx(Time_value, 0b01000000, true);
 
   float  hum = dht.readHumidity();
   float  temp = dht.readTemperature();
-  
-//  checkdht(hum,temp);
-  db_state = digitalRead(DB_PIN);
-  dht_button_state = digitalRead(DHTB_PIN);
 
-  // HHMM dis // 
-  int value = h * 100 + m;
-  display.showNumberDecEx(value, 0b01000000, true);
+// read button states 
+  display_button = digitalRead(DB_PIN);
+  mode_button = digitalRead(MODE_PIN);
 
-  laststate = check_button_state(db_state,laststate);
+
+  //laststate = check_button_state(db_state,laststate);
   //dht_button_laststate = check_button_state(dht_button_state,dht_button_laststate);
 
 
