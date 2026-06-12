@@ -4,8 +4,9 @@
 #include <TM1637Display.h>
 #include <stdio.h>
 #include <DHT.h>
+#include "watch.h"
 RTC_DS3231 rtc;
-
+/*
 #define CLK 18
 #define DIO 19
 
@@ -16,7 +17,7 @@ RTC_DS3231 rtc;
 #define MODE_PIN 13 // the button to select mode
 
 #define DHTTYPE DHT11
-
+*/
 TM1637Display display(CLK, DIO);
 
 DHT dht(DHTPIN, DHTTYPE);  
@@ -85,7 +86,7 @@ void setup() {
   //rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
   delay(2000);
 }
-
+/*
 void checkdht(float h, float t)
 {
     Serial.println("current humidity % Temperature:");
@@ -94,7 +95,7 @@ void checkdht(float h, float t)
     Serial.println(t);
     Serial.println("C ");
 }
-
+*/
 
 void loop() {
   DateTime now = rtc.now();
@@ -108,7 +109,7 @@ void loop() {
   float  hum = dht.readHumidity();
   float  temp = dht.readTemperature();
 
-// read button states 
+  // read button states 
   display_button = digitalRead(DB_PIN);
   mode_button = digitalRead(MODE_PIN);
 
@@ -119,7 +120,8 @@ void loop() {
 
   if (check_alert(h,m))
       {
-          laststate = check_button_state(0,0);
+          display_state = 1;// Turn on the display when ringing!!!
+          Turn_switch(&display_state);
           alert_sound(ALERT);
       }
 //  Serial.println("the DHTPIN is");
@@ -130,6 +132,29 @@ void loop() {
 //  display.showNumberDecEx(temp, 0b01000000, true);
 //  printf("the current time is :%d\n",value);
 //    printf("the db_state and laststate is  %d : %d\n",db_state, laststate);
+
+
+  if (!(display_button) || !(mode_button))
+  {
+      if (!(display_button))
+      {
+          
+          Serial.println("displaybutton pressed");
+          Serial.println("display_state is now");
+          Serial.println(display_state);
+          Display_switch(&display_state);
+      }
+      else if (!(mode_button))
+      {
+
+          Serial.println("mode_button pressed");
+          Serial.println("mode_state is now");
+          Serial.println(mode_state);
+          set_mode(&mode_state);
+      }
+      delay(1000);
+  }
+
   delay(10);
 }
 
