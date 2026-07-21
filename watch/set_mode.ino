@@ -1,8 +1,4 @@
 #include "watch.h"
-
-#define TIME 1 
-#define HUMIDITY 2
-#define TEMPERATURE 3
 // there has to be three modes such as time , humidity and temperature mode.
 
 // if (set_mode_pin)

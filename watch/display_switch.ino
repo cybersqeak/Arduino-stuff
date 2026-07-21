@@ -12,7 +12,7 @@
 
 void Turn_switch(int *current_state)
 {
-    Serial.println("aim hrer");
+    Serial.println("here is the display control place");
     if (*current_state == ON)
         display.setBrightness(7,true);
     else

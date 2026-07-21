@@ -69,7 +69,7 @@ int display_button; // display button state
 int mode_button; // mode setting button every time i press button it changes the current mode 
 
 int display_state = 1; // the display is on by default. 
-int mode_state = 1; // the mode is TIME mode by default.
+int mode_state = TIME; // the mode is TIME mode by default.
 
 
 void setup() {
@@ -102,12 +102,16 @@ void loop() {
 
   int h = now.hour();
   int m = now.minute();
-  // HHMM display // 
+  // HHMM display seting  // 
   int Time_value = h * 100 + m;
-  display.showNumberDecEx(Time_value, 0b01000000, true);
-
-  float  hum = dht.readHumidity();
-  float  temp = dht.readTemperature();
+  int  hum = dht.readHumidity();
+  int  temp = dht.readTemperature();
+  if (mode_state == TIME)
+      display.showNumberDecEx(Time_value, 0b01000000, true);
+  else if (mode_state == HUMIDITY)
+      display.showNumberDecEx(hum); 
+  else if (mode_state == TEMPERATURE)
+      display.showNumberDecEx(temp); 
 
   // read button states 
   display_button = digitalRead(DB_PIN);
