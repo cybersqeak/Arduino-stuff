@@ -1,165 +1,60 @@
-#include <unistd.h>
-#include <Wire.h>
-#include "RTClib.h"
-#include <TM1637Display.h>
-#include <stdio.h>
-#include <DHT.h>
-#include "watch.h"
-RTC_DS3231 rtc;
-/*
-#define CLK 18
-#define DIO 19
+#include "system.h"
 
-#define ALERT 2
-#define DHTPIN 5
 
-#define DB_PIN 4  // the button to select display state ON or OFF
-#define MODE_PIN 13 // the button to select mode
-
-#define DHTTYPE DHT11
-*/
-TM1637Display display(CLK, DIO);
+t_sys sys{0};
 
 DHT dht(DHTPIN, DHTTYPE);  
-
-/*
-int check_button_state(int button_pin, int flag)
-{
-    if (button_pin == 0 && flag == 1) 
-      {
-          display.setBrightness(0,false); 
-          flag= 0;
-          printf("the display  is now off  %d\n",flag);
-          delay(500);
-      }
-      else if (button_pin == 0 && flag == 0)
-      {
-          display.setBrightness(7,true);
-          flag = 1;
-          printf("the display is now on %d\n", flag);
-          delay(500);
-      }
-      else if (button_pin == 1 && flag == 1)
-          display.setBrightness(7,true);
-      return (flag);
-}
-*/
-int check_alert(int h, int m)
-{
-    if (h == 6 && (0 <= m && m < 1))
-            return (1);
-    return (0);
-}
-
-int alert_sound(int pin)
-{
-    int count = 0;
-    while (count <= 3)
-    {
-        analogWrite(pin,10);
-        delay(100);
-        analogWrite(pin,0);
-        delay(100);
-        count++;
-    }
-    return (0); // turn on the display
-}    
-
-int display_button; // display button state  
-int mode_button; // mode setting button every time i press button it changes the current mode 
-
-int display_state = 1; // the display is on by default. 
-int mode_state = TIME; // the mode is TIME mode by default.
-
-
+RTC_DS3231 rtc;
+TM1637Display display(CLK, DIO);  
 void setup() {
-  Serial.begin(115200);
+ Serial.begin(115200);
   Wire.begin(21, 22);
   rtc.begin();
   dht.begin();
 
   pinMode(ALERT,OUTPUT);
-  pinMode(DB_PIN,INPUT_PULLUP);
-  pinMode(MODE_PIN,INPUT_PULLUP);
+  pinMode(DB_PIN,INPUT_PULLUP); pinMode(MODE_PIN,INPUT_PULLUP);
   analogWrite(ALERT,0);
 
+  display.clear();   // <-- actually pushes the off-state to the chip
   //rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
   delay(2000);
-}
-/*
-void checkdht(float h, float t)
+ }
+
+
+
+void loop() 
 {
-    Serial.println("current humidity % Temperature:");
-    Serial.println(h);
-    Serial.println("% ");
-    Serial.println(t);
-    Serial.println("C ");
-}
-*/
+    if (!digitalRead(DB_PIN))
+        {
+            on_off(&sys);
+            delay(300);
+        }
 
-void loop() {
-  DateTime now = rtc.now();
+    if (!digitalRead(MODE_PIN))
+        {
+            check_mode(&sys);
+            delay(300);
+        }
+   
+    Serial.print("\nThe switch_state ");
+    Serial.printf("%d\n", sys.switch_state);
 
-  int h = now.hour();
-  int m = now.minute();
-  // HHMM display seting  // 
-  int Time_value = h * 100 + m;
-  int  hum = dht.readHumidity();
-  int  temp = dht.readTemperature();
-  if (mode_state == TIME)
-      display.showNumberDecEx(Time_value, 0b01000000, true);
-  else if (mode_state == HUMIDITY)
-      display.showNumberDecEx(hum); 
-  else if (mode_state == TEMPERATURE)
-      display.showNumberDecEx(temp); 
+    Serial.print("\ndis.mode ");
+    Serial.print(sys.dis.mode);   // t_mode is an enum, prints as its underlying int
 
-  // read button states 
-  display_button = digitalRead(DB_PIN);
-  mode_button = digitalRead(MODE_PIN);
+    if (sys.switch_state == 0)
+    {
+        Serial.print("haha turn off");
+        display.clear();   // <-- actually pushes the off-state to the chip
+    }
 
-
-  //laststate = check_button_state(db_state,laststate);
-  //dht_button_laststate = check_button_state(dht_button_state,dht_button_laststate);
-
-
-  if (check_alert(h,m))
-      {
-          display_state = 1;// Turn on the display when ringing!!!
-          Turn_switch(&display_state);
-          alert_sound(ALERT);
-      }
-//  Serial.println("the DHTPIN is");
- // Serial.println(dht_button_state);
-  //Serial.println("the laststate is");
-  //Serial.println(laststate);
-  // i want to 
-//  display.showNumberDecEx(temp, 0b01000000, true);
-//  printf("the current time is :%d\n",value);
-//    printf("the db_state and laststate is  %d : %d\n",db_state, laststate);
-
-
-  if (!(display_button) || !(mode_button))
-  {
-      if (!(display_button))
-      {
-          
-          Serial.println("displaybutton pressed");
-          Serial.println("display_state is now");
-          Serial.println(display_state);
-          Display_switch(&display_state);
-      }
-      else if (!(mode_button))
-      {
-
-          Serial.println("mode_button pressed");
-          Serial.println("mode_state is now");
-          Serial.println(mode_state);
-          set_mode(&mode_state);
-      }
-      delay(1000);
-  }
-
-  delay(10);
+    if (sys.switch_state == 1)
+    {
+        Serial.print("i am here");
+        run(&sys);
+    }
+    delay(100);
 }
 
 
