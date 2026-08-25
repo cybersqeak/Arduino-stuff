@@ -36,6 +36,7 @@ void loop()
             check_mode(&sys);
             delay(300);
         }
+    alert_check(&info);
    
     Serial.print("\nThe switch_state ");
     Serial.printf("%d\n", sys.switch_state);
