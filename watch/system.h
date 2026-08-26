@@ -1,8 +1,7 @@
 #ifndef SYSTEM_H
 #define SYSTEM_H
 
-#include <unistd.h>
-#include <stdio.h>
+#include <unistd.h> #include <stdio.h>
 #include <Arduino.h>
 #include <Wire.h>
 #include "RTClib.h"
@@ -22,8 +21,6 @@ extern DHT dht;
 #define ON 1
 #define OFF 0
 
-#define CLK 18
-#define DIO 19
 
 #define CLK 18
 #define DIO 19
@@ -33,6 +30,7 @@ extern DHT dht;
 
 #define DB_PIN 4  // the button to select display state ON or OFF
 #define MODE_PIN 13 // the button to select mode
+#define ALERT_PIN 12
 
 #define DHTTYPE DHT11
 
@@ -65,13 +63,17 @@ typedef struct s_sys
     t_alerm alert_time;
     t_display dis; 
     int switch_state;
+    int c_hour;
+    int c_min;
+    int c_time;
 }t_sys;
 
 
 void run(t_sys *sys);
 void check_mode(t_sys *sys);
 void on_off(t_sys *sys);
-
+void alert_assign(t_sys *sys);
+void check_alert(t_sys *sys);
 
 
 

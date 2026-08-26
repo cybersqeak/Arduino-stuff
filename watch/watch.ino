@@ -2,6 +2,9 @@
 
 
 t_sys sys{0};
+/* set alert time by default at 5:30 */
+//sys.alert_time.hour = 5;
+//sys.alert_time.minute = 30;
 
 DHT dht(DHTPIN, DHTTYPE);  
 RTC_DS3231 rtc;
@@ -13,7 +16,9 @@ void setup() {
   dht.begin();
 
   pinMode(ALERT,OUTPUT);
-  pinMode(DB_PIN,INPUT_PULLUP); pinMode(MODE_PIN,INPUT_PULLUP);
+  pinMode(DB_PIN,INPUT_PULLUP); 
+  pinMode(MODE_PIN,INPUT_PULLUP);
+  pinMode(ALERT_PIN,INPUT_PULLUP);
   analogWrite(ALERT,0);
 
   display.clear();   // <-- actually pushes the off-state to the chip
@@ -25,24 +30,30 @@ void setup() {
 
 void loop() 
 {
+    DateTime now = rtc.now();
+    sys.c_hour = now.hour();
+    sys.c_min = now.minute();
+    sys.c_time = sys.c_hour * 100 + sys.c_min;
     if (!digitalRead(DB_PIN))
-        {
-            on_off(&sys);
-            delay(300);
-        }
-
+            on_off(&sys), delay(300);
     if (!digitalRead(MODE_PIN))
-        {
-            check_mode(&sys);
-            delay(300);
-        }
-    alert_check(&info);
-   
+            check_mode(&sys), delay(300);
+    if (!digitalRead(ALERT_PIN))
+        alert_assign(&sys);
+    check_alert(&sys); 
+
     Serial.print("\nThe switch_state ");
     Serial.printf("%d\n", sys.switch_state);
 
     Serial.print("\ndis.mode ");
     Serial.print(sys.dis.mode);   // t_mode is an enum, prints as its underlying int
+
+    Serial.print("the alert time is set to\n");
+    Serial.print(sys.alert_time.hour);
+    Serial.print(": hour and");
+    Serial.print(sys.alert_time.minute);
+    Serial.print("minute");
+
 
     if (sys.switch_state == 0)
     {

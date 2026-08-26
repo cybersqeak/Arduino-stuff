@@ -26,18 +26,16 @@ static void display_humid(void)
     display.setBrightness(7, true);
     
 }
-static void dis(void)
+static void dis(t_sys *sys)
 {
-    DateTime now = rtc.now();
-    int time_value = now.hour() * 100 + now.minute();
-    display.showNumberDecEx(time_value, 0b01000000,true);
-    display.setBrightness(7,true);
+    display.showNumberDecEx(sys->c_time, 0b01000000,true);
+    display.setBrightness(sys->dis.dis_light,true);
 }
 
 void   run(t_sys *sys)
 {
     if (sys->dis.mode == TIME)
-        dis();
+        dis(sys);
     else if (sys->dis.mode == HUMID)
         display_humid();
     else 
