@@ -74,6 +74,7 @@ void check_mode(t_sys *sys);
 void on_off(t_sys *sys);
 void alert_assign(t_sys *sys);
 void check_alert(t_sys *sys);
+void check_light(t_sys *sys);
 
 
 

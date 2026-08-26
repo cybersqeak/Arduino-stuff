@@ -41,6 +41,7 @@ void loop()
     if (!digitalRead(ALERT_PIN))
         alert_assign(&sys);
     check_alert(&sys); 
+    check_light(&sys);
 
     Serial.print("\nThe switch_state ");
     Serial.printf("%d\n", sys.switch_state);

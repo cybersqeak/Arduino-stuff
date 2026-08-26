@@ -1,6 +1,6 @@
 #include "system.h"
 
-static void display_temp(void)
+static void display_temp(t_sys *sys)
 {
     int temp = dht.readTemperature();
     uint8_t seg_data[4];
@@ -11,10 +11,10 @@ static void display_temp(void)
     seg_data[3] = SEG_C;                              // C
 
     display.setSegments(seg_data);
-    display.setBrightness(7, true);
+    display.setBrightness(sys->dis.dis_light, true);
 }
 
-static void display_humid(void)
+static void display_humid(t_sys *sys)
 {
     int hum = dht.readHumidity();
     uint8_t seg_data[4];
@@ -23,7 +23,7 @@ static void display_humid(void)
     seg_data[2] = display.encodeDigit(hum % 10);
     seg_data[3] = 118;                               // H for humidity (no real % glyph exists)
     display.setSegments(seg_data);
-    display.setBrightness(7, true);
+    display.setBrightness(sys->dis.dis_light, true);
     
 }
 static void dis(t_sys *sys)
@@ -37,8 +37,8 @@ void   run(t_sys *sys)
     if (sys->dis.mode == TIME)
         dis(sys);
     else if (sys->dis.mode == HUMID)
-        display_humid();
+        display_humid(sys);
     else 
-        display_temp();
+        display_temp(sys);
 }
 

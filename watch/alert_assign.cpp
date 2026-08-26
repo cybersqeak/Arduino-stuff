@@ -14,15 +14,15 @@ void    alert_assign(t_sys *sys)
         dis_alert_time(sys);
         if (!digitalRead(DB_PIN))
         {
-            sys->alert_time.hour++;
+            sys->alert_time.hour = (sys->alert_time.hour + 1) % 24;
             Serial.printf("hour++: %d\n",sys->alert_time.hour);
-            delay(300);
+            delay(150);
         }
         if (!digitalRead(MODE_PIN))
         {
-            sys->alert_time.minute++;
+            sys->alert_time.minute = (sys->alert_time.minute + 1) % 60;
             Serial.printf("minute++: %d\n",sys->alert_time.minute);
-            delay(300);
+            delay(150);
         }
         if (!digitalRead(ALERT_PIN))
         {
