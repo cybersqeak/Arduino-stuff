@@ -11,7 +11,6 @@
 extern RTC_DS3231 rtc;
 extern TM1637Display display;
 extern DHT dht;
-
 // custom symbols using segments already defined in system.h
 #define SEG_DEGREE (SEG_A | SEG_B | SEG_F | SEG_G)          // small circle top-right
 #define SEG_C      (SEG_A | SEG_D | SEG_E | SEG_F)          // letter C
@@ -26,6 +25,7 @@ extern DHT dht;
 #define DIO 19
 
 #define ALERT 2
+#define STOP_AT 16
 #define DHTPIN 5
 
 #define DB_PIN 4  // the button to select display state ON or OFF
@@ -40,6 +40,7 @@ typedef struct s_alerm
 {
     int hour;
     int minute;
+    unsigned long stoped_alert;
 }t_alerm;
 
 /* modes to be selected*/
@@ -75,6 +76,9 @@ void on_off(t_sys *sys);
 void alert_assign(t_sys *sys);
 void check_alert(t_sys *sys);
 void check_light(t_sys *sys);
+void check_stop_alert(t_sys *sys);
+void sound_effect(int type);
+void beep(int freq, int duration_ms);
 
 
 
