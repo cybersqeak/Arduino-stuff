@@ -11,8 +11,8 @@ void setup() {
   Wire.begin(21, 22);
   rtc.begin();
   dht.begin();
-  sys.alert_time.hour = 5;
-  sys.alert_time.minute= 30;
+  sys.alert_time.hour = 18;
+  sys.alert_time.minute= 23;
   pinMode(ALERT,OUTPUT);
   
   pinMode(DB_PIN,INPUT_PULLUP); 
@@ -45,29 +45,29 @@ void loop()
     check_alert(&sys); 
     check_light(&sys);
     check_stop_alert(&sys);
+    
+   // Serial.print("\nThe switch_state ");
+    //Serial.printf("%d\n", sys.switch_state);
 
-    Serial.print("\nThe switch_state ");
-    Serial.printf("%d\n", sys.switch_state);
+    //Serial.print("\ndis.mode ");
+   // Serial.print(sys.dis.mode);   // t_mode is an enum, prints as its underlying int
 
-    Serial.print("\ndis.mode ");
-    Serial.print(sys.dis.mode);   // t_mode is an enum, prints as its underlying int
-
-    Serial.print("\nthe alert time is set to ");
-    Serial.print(sys.alert_time.hour);
-    Serial.print(": hour and");
-    Serial.print(sys.alert_time.minute);
-    Serial.print(" minute\n");
+    //Serial.print("\nthe alert time is set to ");
+    //Serial.print(sys.alert_time.hour);
+    //Serial.print(": hour and");
+   // Serial.print(sys.alert_time.minute);
+    //Serial.print(" minute\n");
 
 
     if (sys.switch_state == 0)
     {
-        Serial.print("haha turn off\n");
+      //  Serial.print("haha turn off\n");
         display.clear();   // <-- actually pushes the off-state to the chip
     }
 
     if (sys.switch_state == 1)
     {
-        Serial.print("haha  turned on\n");
+       // Serial.print("haha  turned on\n");
         run(&sys);
     }
     delay(100);
