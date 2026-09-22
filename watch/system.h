@@ -79,6 +79,8 @@ void check_light(t_sys *sys);
 void check_stop_alert(t_sys *sys);
 void sound_effect(int type);
 void beep(int freq, int duration_ms);
+void begin_alert(t_sys *sys);
+void snooze(t_sys *sys);
 
 
 

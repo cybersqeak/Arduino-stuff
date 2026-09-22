@@ -12,7 +12,7 @@ void setup() {
   rtc.begin();
   dht.begin();
   sys.alert_time.hour = 18;
-  sys.alert_time.minute= 23;
+  sys.alert_time.minute= 50;
   pinMode(ALERT,OUTPUT);
   
   pinMode(DB_PIN,INPUT_PULLUP); 
