@@ -1,4 +1,4 @@
-#include "system.h"
+#include "system.hpp"
 
 static void display_temp(t_sys *sys)
 {

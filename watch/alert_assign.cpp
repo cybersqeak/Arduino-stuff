@@ -1,4 +1,4 @@
-#include "system.h"
+#include "system.hpp"
 
 static void    dis_alert_time(t_sys *sys)
 {

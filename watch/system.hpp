@@ -1,7 +1,8 @@
-#ifndef SYSTEM_H
-#define SYSTEM_H
+#ifndef SYSTEM_HPP
+#define SYSTEM_HPP
 
-#include <unistd.h> #include <stdio.h>
+#include <unistd.h>
+#include <stdio.h>
 #include <Arduino.h>
 #include <Wire.h>
 #include "RTClib.h"
@@ -61,6 +62,7 @@ typedef struct s_display
 /*structure that hold all system infomations*/
 typedef struct s_sys
 {
+    int elapsed_t;
     t_alerm alert_time;
     t_display dis; 
     int switch_state;

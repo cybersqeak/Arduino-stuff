@@ -1,4 +1,4 @@
-#include "system.h"
+#include "system.hpp"
 
 void check_mode(t_sys *sys)
 {

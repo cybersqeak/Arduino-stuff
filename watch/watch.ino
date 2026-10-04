@@ -1,7 +1,7 @@
-#include "system.h"
+#include "system.hpp"
 
 
-t_sys sys{0}; /* set alert time by default at 5:30 */
+static t_sys sys; /* set alert time by default at 5:30 */
 
 DHT dht(DHTPIN, DHTTYPE);  
 RTC_DS3231 rtc;
@@ -11,8 +11,8 @@ void setup() {
   Wire.begin(21, 22);
   rtc.begin();
   dht.begin();
-  sys.alert_time.hour = 18;
-  sys.alert_time.minute= 50;
+  sys.alert_time.hour = 16;
+  sys.alert_time.minute= 25;
   pinMode(ALERT,OUTPUT);
   
   pinMode(DB_PIN,INPUT_PULLUP); 
@@ -41,7 +41,6 @@ void loop()
         check_mode(&sys), delay(300);
     if (!digitalRead(ALERT_PIN))
         alert_assign(&sys),delay(300);
-
     check_alert(&sys); 
     check_light(&sys);
     check_stop_alert(&sys);
@@ -57,7 +56,7 @@ void loop()
     //Serial.print(": hour and");
    // Serial.print(sys.alert_time.minute);
     //Serial.print(" minute\n");
-
+//    Serial.printf("sys.elapsed_t is now %zu\n", sys.elapsed_t);
 
     if (sys.switch_state == 0)
     {

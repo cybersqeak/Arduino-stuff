@@ -1,4 +1,4 @@
-#include "system.h"
+#include "system.hpp"
 
 void snooze(t_sys *sys)
 {

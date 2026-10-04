@@ -1,4 +1,4 @@
-#include "system.h"
+#include "system.hpp"
 
 void    check_stop_alert(t_sys *sys)
 {

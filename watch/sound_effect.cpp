@@ -1,8 +1,7 @@
 
-#include "system.h"
+#include "system.hpp"
 
 // e.g. put this in alert_assign.cpp or a new sound.cpp
-#include "system.h"
 
 void beep(int freq, int duration_ms)
 {

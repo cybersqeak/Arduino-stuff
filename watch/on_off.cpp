@@ -1,4 +1,4 @@
-#include "system.h"
+#include "system.hpp"
 
 void    on_off(t_sys *sys)
 {
