@@ -4,7 +4,7 @@ RTC_DS3231 rtc;
 const int mosfetPin = 2;
 const int rmosfetPin = 16;
 const int sensor_pin = 4;
-const int manual_mode_pin = 13;
+//const int manual_mode_pin = 13;
 
 const int plus_pin = 14;
 const int minus_pin = 27;
@@ -53,6 +53,7 @@ void setup()
     bedMinutes = bedHour * 60 + bedMinute;
 
     rtc.begin();
+
     xTaskCreate(sensor_check, "check_sensor",2048,info,1,NULL);
     xTaskCreate(check_time, "check_time",2048,info,1,NULL);
     
@@ -91,6 +92,7 @@ void loop()
         Serial.printf("start_t is %d\n",info.start_t);
         Serial.printf("elapsed_t is %d\n",info.elapsed_t);
     }
+
     else 
     {
         Serial.print("the None statement\n");
