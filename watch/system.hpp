@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <Arduino.h>
 #include <Wire.h>
+#include <thread>
 #include "RTClib.h"
 #include <TM1637Display.h>
 #include <DHT.h>
@@ -66,6 +67,8 @@ typedef struct s_sys
     t_alerm alert_time;
     t_display dis; 
     int switch_state;
+    int alert_stop;
+    int scheduled[3];
     int c_hour;
     int c_min;
     int c_time;

@@ -1,5 +1,4 @@
 #include "system.hpp"
-
 void    check_stop_alert(t_sys *sys)
 {
     if (sys->alert_time.stoped_alert) 

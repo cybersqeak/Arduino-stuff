@@ -43,7 +43,7 @@ void loop()
         alert_assign(&sys),delay(300);
     check_alert(&sys); 
     check_light(&sys);
-    check_stop_alert(&sys);
+//    check_stop_alert(&sys);
     
    // Serial.print("\nThe switch_state ");
     //Serial.printf("%d\n", sys.switch_state);
