@@ -41,7 +41,20 @@ void loop()
         check_mode(&sys), delay(300);
     if (!digitalRead(ALERT_PIN))
         alert_assign(&sys),delay(300);
-    check_alert(&sys); 
+
+    if (sys.switch_state == 0)
+    {
+      //  Serial.print("haha turn off\n");
+        display.clear();   // <-- actually pushes the off-state to the chip
+    }
+
+    if (sys.switch_state == 1)
+    {
+       // Serial.print("haha  turned on\n");
+        run(&sys);
+    }
+
+     check_alert(&sys); 
     check_light(&sys);
 //    check_stop_alert(&sys);
     
@@ -57,19 +70,7 @@ void loop()
    // Serial.print(sys.alert_time.minute);
     //Serial.print(" minute\n");
 //    Serial.printf("sys.elapsed_t is now %zu\n", sys.elapsed_t);
-
-    if (sys.switch_state == 0)
-    {
-      //  Serial.print("haha turn off\n");
-        display.clear();   // <-- actually pushes the off-state to the chip
-    }
-
-    if (sys.switch_state == 1)
-    {
-       // Serial.print("haha  turned on\n");
-        run(&sys);
-    }
-    delay(100);
+   delay(100);
 }
 
 
