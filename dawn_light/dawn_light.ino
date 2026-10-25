@@ -11,7 +11,7 @@ const int sensor_pin = 4;
 const int startHour = 5;
 const int startMinute = 00;
 
-const int rstartHour = 18;
+const int rstartHour = 20;
 const int rstartMinute = 0;
 
 const int wakeHour = 7;
@@ -29,6 +29,8 @@ int bedMinutes;
 
 
 static t_info info;
+
+
 void setup()
 {
     Serial.begin(115200);
@@ -38,7 +40,7 @@ void setup()
     pinMode(mosfetPin, OUTPUT);
     pinMode(rmosfetPin, OUTPUT);
     /*sensor pin (two sensors but in single pin. cool right?*/
-    pinMode(sensor_pin,INPUT);
+    pinMode(sensor_pin,INPUT_PULLDOWN);
     /* the button pins for manipulating the LED*/
     //pinMode(manual_mode_pin,INPUT);
 //    pinMode(plus_pin,INPUT);
@@ -58,45 +60,41 @@ void setup()
     xTaskCreate(check_time, "check_time",2048,&info,1,NULL);
     
     //rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+    delay(5000);
 }
-
+   
 void loop()
 {
     DateTime now = rtc.now();
-
     info.currentMinutes = now.hour() * 60 + now.minute();
 
-    Serial.printf("current time is %d\n",info.currentMinutes);
+    // Print the complete state every second.
+    print_status(&info);
 
-    // wake up with Fake sun_raise!! 
     if (info.led_mode[0])
     {
-        Serial.print("sun raising\n");
-        sun_raise(mosfetPin,&info);
+        sun_raise(mosfetPin, &info);
     }
-
-    // EveningRED LED turn on
     else if (info.led_mode[1])
     {
-        analogWrite(mosfetPin,0);
-        Serial.print("night time!\n");
-        sleepy_night(rmosfetPin,&info);
-        //analogWrite(rmosfetPin, 25);
+        analogWrite(mosfetPin, 0);
+        sleepy_night(rmosfetPin, &info);
+    }
+    else if (info.sensor_detected || info.elapsed_t)
+    {
+        analogWrite(mosfetPin, 0);
+
+        // Consume the motion event.
+        info.sensor_detected = false;
+
+        sensor_detected(rmosfetPin, &info);
+    }
+    else
+    {
+        analogWrite(rmosfetPin, 0);
+        analogWrite(mosfetPin, 0);
     }
 
-    else  if (info.sensor_detected = true || info.elapsed_t)
-    {
-        analogWrite(mosfetPin,0);
-        Serial.print("the sensor detected  statement\n");
-        sensor_detected(rmosfetPin,&info);
-        Serial.printf("start_t is %d\n",info.start_t);
-        Serial.printf("elapsed_t is %d\n",info.elapsed_t);
-    }
-
-    else 
-    {
-        Serial.print("the None statement\n");
-        analogWrite(rmosfetPin,0);
-        analogWrite(mosfetPin,0);
-    }
+    delay(1000);
 }
+ 

@@ -3,19 +3,29 @@
 void    sensor_check(void *param)
 {
     t_info *info =( t_info *)(param);
+    vTaskDelay(7000);
 /*    if (info->sensor_enable == false)
         vTaskDelete(NULL);*/
     while (1)
     {
+//        Serial.println("i ama here\n");
         if (!info->led_mode[2])
+        {
+            vTaskDelay(pdMS_TO_TICKS(100));
+            info->sensor_pin = 0;
+//            Serial.printf("skip\n");
             continue;
-        if (digitalRead(sensor_pin))
+        }
+        info->sensor_pin = digitalRead(sensor_pin);
+        if (info->sensor_pin)
         {
             info->sensor_detected = true;
-            Serial.println("Motion detected\n");
+ //           Serial.println("Motion detected\n");
         }
         else
-            info->sensor_detected = false;
+        {
+  //          Serial.println("No motion detected\n");
+        }
 
     /*    if (info->sensor_enable = false)
         {
@@ -23,7 +33,7 @@ void    sensor_check(void *param)
             vTaskDelete(NULL);
         }*/
 
-        vTaskDelay(10);
+        vTaskDelay(100);
     }
 }
     
@@ -33,14 +43,15 @@ void    check_time(void *param)
 {
     t_info *info = (t_info*)(param);
 
+    vTaskDelay(7000);
     while (1)
     {
-        Serial.println("checking time in check_time thread\n");
+ //       Serial.println("checking time in check_time thread\n");
 
         if (info->currentMinutes >= startMinutes &&
                 info->currentMinutes <= wakeMinutes)
         {
-            Serial.println("Wake up led mode enabled\n");
+  //          Serial.println("Wake up led mode enabled\n");
             info->led_mode[0] = true;
             info->led_mode[1] = false;
             info->led_mode[2] = false;
@@ -48,27 +59,27 @@ void    check_time(void *param)
         else if (info->currentMinutes >= rstartMinutes &&
                 info->currentMinutes <= bedMinutes)
         {
-            Serial.println("bed mode enabled\n")l;
+  //          Serial.println("bed mode enabled\n");
             info->led_mode[0] = false;
             info->led_mode[1] = true;
             info->led_mode[2] = false;
         }
         else if(wakeMinutes < info->currentMinutes && info->currentMinutes < rstartMinutes)
         {
-            Serial.println("Normal mode , sensor enabled\n");
+   //         Serial.println("Normal mode , sensor enabled\n");
             info->led_mode[0] = false;
             info->led_mode[1] = false;
             info->led_mode[2] = true;
         }
         else
         {
-            Serial.println("Night mode enable goodnight\n");
+    //        Serial.println("Night mode enable goodnight\n");
             info->led_mode[0] = false;
             info->led_mode[1] = false;
             info->led_mode[2] = false;
         }
             
-       vTaskDelay(10);
+       vTaskDelay(100);
     }
 
 }
