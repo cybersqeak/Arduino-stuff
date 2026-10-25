@@ -6,8 +6,8 @@ const int rmosfetPin = 16;
 const int sensor_pin = 4;
 //const int manual_mode_pin = 13;
 
-const int plus_pin = 14;
-const int minus_pin = 27;
+//const int plus_pin = 14;
+//const int minus_pin = 27;
 const int startHour = 5;
 const int startMinute = 00;
 
@@ -40,9 +40,9 @@ void setup()
     /*sensor pin (two sensors but in single pin. cool right?*/
     pinMode(sensor_pin,INPUT);
     /* the button pins for manipulating the LED*/
-    pinMode(manual_mode_pin,INPUT);
-    pinMode(plus_pin,INPUT);
-    pinMode(minus_pin,INPUT);
+    //pinMode(manual_mode_pin,INPUT);
+//    pinMode(plus_pin,INPUT);
+ //   pinMode(minus_pin,INPUT);
     analogWrite(mosfetPin, 0);
     analogWrite(rmosfetPin, 0);
 
@@ -54,8 +54,8 @@ void setup()
 
     rtc.begin();
 
-    xTaskCreate(sensor_check, "check_sensor",2048,info,1,NULL);
-    xTaskCreate(check_time, "check_time",2048,info,1,NULL);
+    xTaskCreate(sensor_check, "check_sensor",2048,&info,1,NULL);
+    xTaskCreate(check_time, "check_time",2048,&info,1,NULL);
     
     //rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
 }
@@ -64,31 +64,31 @@ void loop()
 {
     DateTime now = rtc.now();
 
-    int info.currentMinutes = now.hour() * 60 + now.minute();
+    info.currentMinutes = now.hour() * 60 + now.minute();
 
-    Serial.printf("current time is %d\n",currentMinutes);
+    Serial.printf("current time is %d\n",info.currentMinutes);
 
     // wake up with Fake sun_raise!! 
     if (info.led_mode[0])
     {
         Serial.print("sun raising\n");
-        sun_raise(mosfetPin);
+        sun_raise(mosfetPin,&info);
     }
 
     // EveningRED LED turn on
     else if (info.led_mode[1])
     {
-        analogWrite(mosfetPin,0):
+        analogWrite(mosfetPin,0);
         Serial.print("night time!\n");
-        sleepy_night(rmosfetPin);
+        sleepy_night(rmosfetPin,&info);
         //analogWrite(rmosfetPin, 25);
     }
 
     else  if (info.sensor_detected = true || info.elapsed_t)
     {
-        analogWrite(mosfetPin,0):
+        analogWrite(mosfetPin,0);
         Serial.print("the sensor detected  statement\n");
-        sensor_detected(rmosfetPin,&info)
+        sensor_detected(rmosfetPin,&info);
         Serial.printf("start_t is %d\n",info.start_t);
         Serial.printf("elapsed_t is %d\n",info.elapsed_t);
     }
@@ -97,6 +97,6 @@ void loop()
     {
         Serial.print("the None statement\n");
         analogWrite(rmosfetPin,0);
-        analogWrite(mosfetPin,0):
+        analogWrite(mosfetPin,0);
     }
 }
