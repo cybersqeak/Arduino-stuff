@@ -9,7 +9,7 @@ const int sensor_pin = 4;
 //const int plus_pin = 14;
 //const int minus_pin = 27;
 const int startHour = 5;
-const int startMinute = 00;
+const int startMinute = 30;
 
 const int rstartHour = 20;
 const int rstartMinute = 0;
@@ -18,7 +18,7 @@ const int wakeHour = 7;
 const int wakeMinute = 0;
 
 const int bedHour = 21;
-const int bedMinute = 15;
+const int bedMinute = 30;
 
 
 // Schedule times just a exampleee
@@ -77,24 +77,23 @@ void loop()
     }
     else if (info.led_mode[1])
     {
+        info.elapsed_t = 0;
         analogWrite(mosfetPin, 0);
         sleepy_night(rmosfetPin, &info);
     }
-    else if (info.sensor_detected || info.elapsed_t)
+    else if (info.sensor_pin || info.elapsed_t)
     {
         analogWrite(mosfetPin, 0);
-
-        // Consume the motion event.
-        info.sensor_detected = false;
-
-        sensor_detected(rmosfetPin, &info);
+        analogWrite(rmosfetPin,255); // max strength is good here
+        sensor_detected(&info);
     }
     else
     {
+        Serial.println("am here\n");
         analogWrite(rmosfetPin, 0);
         analogWrite(mosfetPin, 0);
     }
 
-    delay(1000);
+    delay(100);
 }
  

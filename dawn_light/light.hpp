@@ -37,21 +37,22 @@ typedef struct s_info
    unsigned long  elapsed_t;
    unsigned long  start_t;
 //   int manual_mode;
-   bool sensor_detected;
-   bool sensor_enable;
-   bool led_mode[3];
+   volatile bool sensor_detected;
+   volatile bool sensor_enable;
+   volatile int  sensor_pin;
+   volatile bool led_mode[3];
    int brightness;
    int currentMinutes;
 
 } t_info;
 
-void manual_mode(int pin, t_info *info);
+//void manual_mode(int pin, t_info *info);
 void check_time(void *param);
 void sensor_check(void *param);
-
-
-
-
+void sun_raise(int pin, t_info *info);
+void sleepy_night(int pin, t_info *info);
+void sensor_detected(t_info *info);
+void print_status(t_info *info);
 
 
 
